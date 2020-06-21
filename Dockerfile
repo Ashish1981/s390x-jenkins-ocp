@@ -43,7 +43,9 @@ RUN curl -fsSL https://github.com/krallin/tini/releases/download/${TINI_VERSION}
   && gpg --no-tty --import ${JENKINS_HOME}/tini_pub.gpg \
   && gpg --verify /sbin/tini.asc \
   && rm -rf /sbin/tini.asc /root/.gnupg \
-  && chmod +x /sbin/tini
+  && chmod +x /sbin/tini \
+  && touch /usr/local/bin/jenkins.sh \ 
+  && chmod +rwx /usr/local/bin/jenkins.sh
 
 # jenkins version being bundled in this docker image
 ARG JENKINS_VERSION
@@ -78,7 +80,7 @@ USER ${user}
 COPY jenkins-support /usr/local/bin/jenkins-support
 COPY jenkins.sh /usr/local/bin/jenkins.sh
 COPY tini-shim.sh /bin/tini
-RUN chmod +x /usr/local/bin/jenkins.sh
+
 ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/jenkins.sh"]
 
 # from a derived Dockerfile, can use `RUN plugins.sh active.txt` to setup ${REF}/plugins from a support bundle
